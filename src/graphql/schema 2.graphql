@@ -1,0 +1,286 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+
+enum SEVERITY {
+  MILD
+  MODERATE
+  SEVERE
+}
+
+enum SPECIES {
+  CAT
+  DOG
+}
+
+type Owner {
+  email: String!
+  firstName: String!
+  id: ID!
+  lastName: String!
+  pets: [Pet]!
+}
+
+type OwnerConnection {
+  items: [Owner]
+  nextToken: String
+}
+
+type Pet {
+  allergies: [Allergy]
+  breed: String
+  dob: AWSDate!
+  id: ID!
+  name: String!
+  owner: Owner!
+  species: SPECIES!
+  vaccinations: [Vaccination]
+}
+
+type PetConnection {
+  items: [Pet]
+  nextToken: String
+}
+
+type Allergy {
+  id: ID!
+  petId: ID!
+  reaction: String!
+  severity: SEVERITY!
+  type: String!
+}
+
+type AllergyConnection {
+  items: [Allergy]
+  nextToken: String
+}
+
+type Vaccination {
+  date: AWSDate!
+  id: ID!
+  petId: ID!
+  type: String!
+}
+
+type VaccinationConnection {
+  items: [Vaccination]
+  nextToken: String
+}
+
+
+input UpdateOwnerInput {
+  email: String
+  firstName: String
+  id: ID!
+  lastName: String
+}
+
+input UpdatePetInput {
+  breed: String
+  dob: AWSDate
+  id: ID!
+  name: String
+  ownerId: ID!
+  species: SPECIES
+}
+
+input UpdateAllergyInput {
+  id: ID!
+  petId: ID!
+  reaction: String!
+  severity: String!
+  type: String!
+}
+
+input UpdateVaccinationInput {
+  date: AWSDate
+  id: ID!
+  petId: ID!
+  type: String
+}
+
+input CreateOwnerInput {
+  email: String!
+  firstName: String!
+  lastName: String!
+}
+
+input CreatePetInput {
+  breed: String
+  dob: AWSDate!
+  name: String!
+  ownerId: ID!
+  species: SPECIES!
+}
+
+input CreateAllergyInput {
+  petId: ID!
+  reaction: String!
+  severity: String!
+  type: String!
+}
+
+input CreateVaccinationInput {
+  date: AWSDate!
+  petId: ID!
+  type: String!
+}
+
+input DeleteOwnerInput {
+  id: ID!
+}
+
+input DeletePetInput {
+  id: ID!
+}
+
+input DeleteAllergyInput {
+  id: ID!
+}
+
+input DeleteVaccinationInput {
+  id: ID!
+}
+
+
+type Mutation {
+  createAllergy(input: CreateAllergyInput!): Allergy
+  createOwner(input: CreateOwnerInput!): Owner
+  createPet(input: CreatePetInput!): Pet
+  createVaccination(input: CreateVaccinationInput!): Vaccination
+  deleteAllergy(input: DeleteAllergyInput!): Allergy
+  deleteOwner(input: DeleteOwnerInput!): Owner
+  deletePet(input: DeletePetInput!): Pet
+  deleteVaccination(input: DeleteVaccinationInput!): Vaccination
+  updateAllergy(input: UpdateAllergyInput!): Allergy
+  updateOwner(input: UpdateOwnerInput!): Owner
+  updatePet(input: UpdatePetInput!): Pet
+  updateVaccination(input: UpdateVaccinationInput!): Vaccination
+}
+
+
+
+
+
+type Query {
+  getAllergy(id: ID!): Allergy
+  getOwner(id: ID!): Owner
+  getPet(id: ID!): Pet
+  getVaccination(id: ID!): Vaccination
+  listAllergies(filter: TableAllergyFilterInput, limit: Int, nextToken: String): AllergyConnection
+  listOwners(filter: TableOwnerFilterInput, limit: Int, nextToken: String): OwnerConnection
+  listPets(filter: TablePetFilterInput, limit: Int, nextToken: String): PetConnection
+  listVaccinations(filter: TableVaccinationFilterInput, limit: Int, nextToken: String): VaccinationConnection
+}
+
+type Subscription {
+  onCreateAllergy: Allergy @aws_subscribe(mutations : ["createAllergy"])
+  onCreateOwner: Owner @aws_subscribe(mutations : ["createOwner"])
+  onCreatePet: Pet @aws_subscribe(mutations : ["createPet"])
+  onCreateVaccination: Vaccination @aws_subscribe(mutations : ["createVaccination"])
+  onDeleteAllergy: Allergy @aws_subscribe(mutations : ["deleteAllergy"])
+  onDeleteOwner: Owner @aws_subscribe(mutations : ["deleteOwner"])
+  onDeletePet: Pet @aws_subscribe(mutations : ["deletePet"])
+  onDeleteVaccination: Vaccination @aws_subscribe(mutations : ["deleteVaccination"])
+  onUpdateAllergy: Allergy @aws_subscribe(mutations : ["updateAllergy"])
+  onUpdateOwner: Owner @aws_subscribe(mutations : ["updateOwner"])
+  onUpdatePet: Pet @aws_subscribe(mutations : ["updatePet"])
+  onUpdateVaccination: Vaccination @aws_subscribe(mutations : ["updateVaccination"])
+}
+
+
+
+input TableOwnerFilterInput {
+  email: TableStringFilterInput
+  firstName: TableStringFilterInput
+  lastName: TableStringFilterInput
+}
+
+input TablePetFilterInput {
+  ownerId: TableIDFilterInput
+  species: TableStringFilterInput
+}
+
+input TableAllergyFilterInput {
+  petId: TableIDFilterInput
+  type: TableStringFilterInput
+}
+
+input TableVaccinationFilterInput {
+  date: TableStringFilterInput
+  id: TableIDFilterInput
+  type: TableStringFilterInput
+}
+
+
+input ModelSizeInput {
+  between: [Int]
+  eq: Int
+  ge: Int
+  gt: Int
+  le: Int
+  lt: Int
+  ne: Int
+}
+
+
+input TableBooleanFilterInput {
+  attributeExists: Boolean
+  eq: Boolean
+  ne: Boolean
+}
+
+input TableFloatFilterInput {
+  attributeExists: Boolean
+  between: [Float]
+  eq: Float
+  ge: Float
+  gt: Float
+  le: Float
+  lt: Float
+  ne: Float
+}
+
+input TableIDFilterInput {
+  attributeExists: Boolean
+  beginsWith: ID
+  between: [ID]
+  contains: ID
+  eq: ID
+  ge: ID
+  gt: ID
+  le: ID
+  lt: ID
+  ne: ID
+  notContains: ID
+  size: ModelSizeInput
+}
+
+input TableIntFilterInput {
+  attributeExists: Boolean
+  between: [Int]
+  eq: Int
+  ge: Int
+  gt: Int
+  le: Int
+  lt: Int
+  ne: Int
+}
+
+input TableStringFilterInput {
+  attributeExists: Boolean
+  beginsWith: String
+  between: [String]
+  contains: String
+  eq: String
+  ge: String
+  gt: String
+  le: String
+  lt: String
+  ne: String
+  notContains: String
+  size: ModelSizeInput
+}
